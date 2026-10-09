@@ -29,9 +29,9 @@ func Open(path string) (*Store, error) {
 	create table if not exists urls (
 		id integer primary key autoincrement,
 		short_code text not null unique,
-		long_url text not null
+		long_url text not null,
 		created_at text not null default (datetime('now')),
-		click_count interger not null default 0
+		click_count integer not null default 0
 	);`
 
 	if _, err := db.Exec(schema); err != nil {
@@ -75,7 +75,7 @@ func (s *Store) GetCodeByLongURL(longURL string) (string, error) {
 	var code string
 
 	err := s.db.QueryRow(
-		`select short_code from urls where longURL = ? limit 1`, longURL,
+		`select short_code from urls where long_url = ? limit 1`, longURL,
 	).Scan(&code)
 
 	if errors.Is(err, sql.ErrNoRows) {
